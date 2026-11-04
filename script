@@ -1,0 +1,108 @@
+<<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #eef3f9;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #173b70;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 15px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: #24589b;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Student Attendance Portal</h1>
+
+  <input
+    type="text"
+    id="search"
+    placeholder="Search student..."
+    oninput="displayData()"
+  >
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sr No</th>
+        <th>Roll No</th>
+        <th>Student Name</th>
+        <th>Total Lectures</th>
+        <th>Attended</th>
+        <th>Attendance %</th>
+      </tr>
+    </thead>
+
+    <tbody id="tableData"></tbody>
+  </table>
+
+  <script>
+
+    let students = [];
+
+    google.script.run
+      .withSuccessHandler(function(data) {
+        students = data;
+        displayData();
+      })
+      .getAttendance();
+
+    function displayData() {
+
+      let search = document
+        .getElementById("search")
+        .value.toLowerCase();
+
+      let result = students.filter(student =>
+        String(student["Roll No"]).toLowerCase().includes(search) ||
+        String(student["Student Name"]).toLowerCase().includes(search)
+      );
+
+      document.getElementById("tableData").innerHTML =
+        result.map(student => `
+          <tr>
+            <td>${student["Sr No"]}</td>
+            <td>${student["Roll No"]}</td>
+            <td>${student["Student Name"]}</td>
+            <td>${student["Total Lectures"]}</td>
+            <td>${student["Attended Lectures"]}</td>
+            <td>${student["Attendance %"]}</td>
+          </tr>
+        `).join("");
+
+    }
+
+  </script>
+
+</body>
+</html>
